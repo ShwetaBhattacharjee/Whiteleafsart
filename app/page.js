@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Heart, ShoppingCart, Mail, Facebook, Sparkles, Loader2, MessageCircle } from 'lucide-react';
+import Image from 'next/image'; // Added for image optimization
 
 export default function ArtPortfolio() {
   const [artworks, setArtworks] = useState([]);
@@ -60,13 +61,11 @@ export default function ArtPortfolio() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        // FIX: Escaped apostrophe ' -> &apos;
         alert('Something went wrong. Please try again.');
         setLoading(null);
       }
     } catch (error) {
       console.error('Error:', error);
-      // FIX: Escaped apostrophe ' -> &apos;
       alert('Something went wrong. Please try again.');
       setLoading(null);
     }
@@ -78,7 +77,7 @@ export default function ArtPortfolio() {
 
   const sendContactEmail = (art) => {
     const subject = encodeURIComponent(`Interested in: ${art.title}`);
-    const body = encodeURIComponent(`Hi Shweta,\n\nI'm interested in purchasing "${art.title}" (Art #${art.id.replace('art-', '')}).\n\nPlease let me know about availability and any additional details.\n\nThank you!`);
+    const body = encodeURIComponent(`Hi Shweta,\n\nI&apos;m interested in purchasing "${art.title}" (Art #${art.id.replace('art-', '')}).\n\nPlease let me know about availability and any additional details.\n\nThank you!`);
     window.location.href = `mailto:shwetaparna111@gmail.com?subject=${subject}&body=${body}`;
     setShowContactModal(null);
   };
@@ -139,9 +138,11 @@ export default function ArtPortfolio() {
                   className="aspect-square bg-gray-100 flex items-center justify-center cursor-pointer overflow-hidden relative group"
                   onClick={() => setSelectedArt(art)}
                 >
-                  <img
+                  <Image
                     src={art.image}
                     alt={art.title}
+                    width={400} // Adjust based on your image dimensions
+                    height={400} // Adjust based on your image dimensions
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center">
@@ -233,7 +234,6 @@ export default function ArtPortfolio() {
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">About My Art</h2>
           <p className="text-gray-600 text-center leading-relaxed mb-4">
-            {/* FIX: Escaped apostrophe ' -> &apos; */}
             Hi! I&apos;m Shweta, a digital and traditional artist creating dreamy, aesthetic pieces inspired by nature,
             emotions, and all things beautiful. Each piece is created with love and attention to detail.
           </p>
@@ -247,7 +247,7 @@ export default function ArtPortfolio() {
       {/* Contact Section */}
       <section id="contact" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl p-8 shadow-lg">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Let's Connect!</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Let&apos;s Connect!</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl p-6 text-center">
               <Mail className="mx-auto mb-3 text-pink-500" size={32} />
@@ -280,9 +280,11 @@ export default function ArtPortfolio() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-6">
-              <img
+              <Image
                 src={selectedArt.image}
                 alt={selectedArt.title}
+                width={500} // Adjust based on your image dimensions
+                height={500} // Adjust based on your image dimensions
                 className="w-full h-full object-cover"
               />
             </div>
@@ -290,7 +292,6 @@ export default function ArtPortfolio() {
             <p className="text-gray-600 mb-4">{selectedArt.description}</p>
             <div className="bg-pink-50 rounded-xl p-4 mb-6">
               <p className="text-sm text-gray-700">
-                {/* FIX: Escaped apostrophe ' -> &apos; */}
                 <strong>What you&apos;ll get:</strong><br />
                 • High-resolution digital file<br />
                 • Instant email delivery with download link<br />
@@ -359,7 +360,6 @@ export default function ArtPortfolio() {
             <MessageCircle className="mx-auto text-pink-500 mb-4" size={48} />
             <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">Contact Me</h3>
             <p className="text-gray-600 mb-6 text-center">
-              {/* FIX: Escaped apostrophe ' -> &apos; */}
               Interested in <strong>{showContactModal.title}</strong>?
             </p>
             <div className="space-y-3">

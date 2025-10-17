@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Download, CheckCircle, Loader2, Mail, ArrowLeft } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image'; // Added for image optimization
 
 export default function DownloadPage() {
     const searchParams = useSearchParams();
@@ -13,34 +14,32 @@ export default function DownloadPage() {
     const [purchaseData, setPurchaseData] = useState(null);
     const [downloading, setDownloading] = useState(false);
 
-    // Define fetchPurchaseData inside or memoize it so it's a stable dependency
-    const fetchPurchaseData = async () => {
-        try {
-            const response = await fetch('/api/verify-purchase?session_id=' + sessionId);
-            const data = await response.json();
-
-            if (data.error) {
-                setError(data.error);
-            } else {
-                setPurchaseData(data);
-            }
-        } catch (err) {
-            setError('Failed to verify purchase');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
+        // Moved fetchPurchaseData inside useEffect to resolve dependency warning
+        const fetchPurchaseData = async () => {
+            try {
+                const response = await fetch(`/api/verify-purchase?session_id=${sessionId}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    setError(data.error);
+                } else {
+                    setPurchaseData(data);
+                }
+            } catch (err) {
+                setError('Failed to verify purchase');
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (sessionId) {
-            // FIX: Dependency array now includes fetchPurchaseData to resolve the warning.
-            // fetchPurchaseData is defined inside the component scope so it should be included.
             fetchPurchaseData();
         } else {
             setError('Invalid download link');
             setLoading(false);
         }
-    }, [sessionId, fetchPurchaseData]); // Added fetchPurchaseData
+    }, [sessionId]); // Only sessionId as dependency
 
     const handleDownload = async () => {
         if (!purchaseData) return;
@@ -50,14 +49,13 @@ export default function DownloadPage() {
         try {
             const link = document.createElement('a');
             link.href = purchaseData.downloadUrl;
-            link.download = purchaseData.artTitle + '.jpg';
+            link.download = `${purchaseData.artTitle}.jpg`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
             setTimeout(() => setDownloading(false), 2000);
         } catch (err) {
-            // FIX: Escaped apostrophe ' -> &apos;
             alert('Download failed. Please try again.');
             setDownloading(false);
         }
@@ -108,11 +106,16 @@ export default function DownloadPage() {
                     <div className="p-8">
                         <div className="flex flex-col md:flex-row gap-6 items-center">
                             <div className="w-full md:w-1/3">
-                                <img
-                                    src={purchaseData?.artImage}
-                                    alt={purchaseData?.artTitle}
-                                    className="w-full rounded-2xl shadow-lg"
-                                />
+                                {purchaseData?.artImage && (
+                                    <Image
+                                        src={purchaseData.artImage}
+                                        alt={purchaseData.artTitle}
+                                        width={300} // Adjust based on your image dimensions
+                                        height={300} // Adjust based on your image dimensions
+                                        className="w-full rounded-2xl shadow-lg"
+                                        priority // Optional: for faster loading
+                                    />
+                                )}
                             </div>
                             <div className="w-full md:w-2/3">
                                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -142,7 +145,6 @@ export default function DownloadPage() {
 
                                 <div className="bg-pink-50 rounded-xl p-4">
                                     <p className="text-sm text-gray-700">
-                                        {/* FIX: Escaped apostrophe ' -> &apos; */}
                                         <strong>💡 Important:</strong> Bookmark this page! You can return anytime to re-download your artwork. A download link has also been sent to <strong>{purchaseData?.customerEmail}</strong>
                                     </p>
                                 </div>
@@ -158,7 +160,6 @@ export default function DownloadPage() {
                         <div>
                             <h3 className="font-bold text-gray-800 mb-2">Check Your Email!</h3>
                             <p className="text-gray-600 text-sm">
-                                {/* FIX: Escaped apostrophe ' -> &apos; */}
                                 We&apos;ve sent a confirmation email to <strong>{purchaseData?.customerEmail}</strong> with your download link.
                                 If you don&apos;t see it, please check your spam folder.
                             </p>
