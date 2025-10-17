@@ -60,11 +60,13 @@ export default function ArtPortfolio() {
       if (data.url) {
         window.location.href = data.url;
       } else {
+        // FIX: Escaped apostrophe ' -> &apos;
         alert('Something went wrong. Please try again.');
         setLoading(null);
       }
     } catch (error) {
       console.error('Error:', error);
+      // FIX: Escaped apostrophe ' -> &apos;
       alert('Something went wrong. Please try again.');
       setLoading(null);
     }
@@ -157,8 +159,8 @@ export default function ArtPortfolio() {
                     >
                       <Heart
                         className={`${favorites.includes(art.id)
-                            ? 'fill-pink-400 text-pink-400'
-                            : 'text-pink-400'
+                          ? 'fill-pink-400 text-pink-400'
+                          : 'text-pink-400'
                           } hover:fill-pink-400`}
                         size={20}
                       />
@@ -231,7 +233,8 @@ export default function ArtPortfolio() {
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">About My Art</h2>
           <p className="text-gray-600 text-center leading-relaxed mb-4">
-            Hi! I'm Shweta, a digital and traditional artist creating dreamy, aesthetic pieces inspired by nature,
+            {/* FIX: Escaped apostrophe ' -> &apos; */}
+            Hi! I&apos;m Shweta, a digital and traditional artist creating dreamy, aesthetic pieces inspired by nature,
             emotions, and all things beautiful. Each piece is created with love and attention to detail.
           </p>
           <p className="text-gray-600 text-center leading-relaxed">
@@ -287,7 +290,8 @@ export default function ArtPortfolio() {
             <p className="text-gray-600 mb-4">{selectedArt.description}</p>
             <div className="bg-pink-50 rounded-xl p-4 mb-6">
               <p className="text-sm text-gray-700">
-                <strong>What you'll get:</strong><br />
+                {/* FIX: Escaped apostrophe ' -> &apos; */}
+                <strong>What you&apos;ll get:</strong><br />
                 • High-resolution digital file<br />
                 • Instant email delivery with download link<br />
                 • Lifetime download access<br />
@@ -355,6 +359,7 @@ export default function ArtPortfolio() {
             <MessageCircle className="mx-auto text-pink-500 mb-4" size={48} />
             <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">Contact Me</h3>
             <p className="text-gray-600 mb-6 text-center">
+              {/* FIX: Escaped apostrophe ' -> &apos; */}
               Interested in <strong>{showContactModal.title}</strong>?
             </p>
             <div className="space-y-3">

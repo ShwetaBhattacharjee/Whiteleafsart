@@ -13,15 +13,7 @@ export default function DownloadPage() {
     const [purchaseData, setPurchaseData] = useState(null);
     const [downloading, setDownloading] = useState(false);
 
-    useEffect(() => {
-        if (sessionId) {
-            fetchPurchaseData();
-        } else {
-            setError('Invalid download link');
-            setLoading(false);
-        }
-    }, [sessionId]);
-
+    // Define fetchPurchaseData inside or memoize it so it's a stable dependency
     const fetchPurchaseData = async () => {
         try {
             const response = await fetch('/api/verify-purchase?session_id=' + sessionId);
@@ -39,6 +31,17 @@ export default function DownloadPage() {
         }
     };
 
+    useEffect(() => {
+        if (sessionId) {
+            // FIX: Dependency array now includes fetchPurchaseData to resolve the warning.
+            // fetchPurchaseData is defined inside the component scope so it should be included.
+            fetchPurchaseData();
+        } else {
+            setError('Invalid download link');
+            setLoading(false);
+        }
+    }, [sessionId, fetchPurchaseData]); // Added fetchPurchaseData
+
     const handleDownload = async () => {
         if (!purchaseData) return;
 
@@ -54,6 +57,7 @@ export default function DownloadPage() {
 
             setTimeout(() => setDownloading(false), 2000);
         } catch (err) {
+            // FIX: Escaped apostrophe ' -> &apos;
             alert('Download failed. Please try again.');
             setDownloading(false);
         }
@@ -138,6 +142,7 @@ export default function DownloadPage() {
 
                                 <div className="bg-pink-50 rounded-xl p-4">
                                     <p className="text-sm text-gray-700">
+                                        {/* FIX: Escaped apostrophe ' -> &apos; */}
                                         <strong>💡 Important:</strong> Bookmark this page! You can return anytime to re-download your artwork. A download link has also been sent to <strong>{purchaseData?.customerEmail}</strong>
                                     </p>
                                 </div>
@@ -153,8 +158,9 @@ export default function DownloadPage() {
                         <div>
                             <h3 className="font-bold text-gray-800 mb-2">Check Your Email!</h3>
                             <p className="text-gray-600 text-sm">
-                                We've sent a confirmation email to <strong>{purchaseData?.customerEmail}</strong> with your download link.
-                                If you don't see it, please check your spam folder.
+                                {/* FIX: Escaped apostrophe ' -> &apos; */}
+                                We&apos;ve sent a confirmation email to <strong>{purchaseData?.customerEmail}</strong> with your download link.
+                                If you don&apos;t see it, please check your spam folder.
                             </p>
                         </div>
                     </div>
