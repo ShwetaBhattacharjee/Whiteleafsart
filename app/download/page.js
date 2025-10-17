@@ -1,11 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Download, CheckCircle, Loader2, Mail, ArrowLeft } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image'; // Added for image optimization
+import Image from 'next/image';
 
-export default function DownloadPage() {
+function DownloadPageContent() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session_id');
 
@@ -15,7 +15,6 @@ export default function DownloadPage() {
     const [downloading, setDownloading] = useState(false);
 
     useEffect(() => {
-        // Moved fetchPurchaseData inside useEffect to resolve dependency warning
         const fetchPurchaseData = async () => {
             try {
                 const response = await fetch(`/api/verify-purchase?session_id=${sessionId}`);
@@ -39,7 +38,7 @@ export default function DownloadPage() {
             setError('Invalid download link');
             setLoading(false);
         }
-    }, [sessionId]); // Only sessionId as dependency
+    }, [sessionId]);
 
     const handleDownload = async () => {
         if (!purchaseData) return;
@@ -110,10 +109,10 @@ export default function DownloadPage() {
                                     <Image
                                         src={purchaseData.artImage}
                                         alt={purchaseData.artTitle}
-                                        width={300} // Adjust based on your image dimensions
-                                        height={300} // Adjust based on your image dimensions
+                                        width={300}
+                                        height={300}
                                         className="w-full rounded-2xl shadow-lg"
-                                        priority // Optional: for faster loading
+                                        priority
                                     />
                                 )}
                             </div>
@@ -219,5 +218,22 @@ export default function DownloadPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function DownloadPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center">
+                    <div className="text-center">
+                        <Loader2 className="animate-spin text-pink-400 mx-auto mb-4" size={48} />
+                        <p className="text-gray-600">Loading download page...</p>
+                    </div>
+                </div>
+            }
+        >
+            <DownloadPageContent />
+        </Suspense>
     );
 }
