@@ -21,7 +21,7 @@ function SuccessContent() {
                         <span className="font-semibold">Email Sent!</span>
                     </div>
                     <p className="text-sm text-gray-600">
-                        Your download link will arrive within 2-3 minutes. Don't forget to check your spam folder!
+                        Your download link will arrive within 2-3 minutes. Don&apos;t forget to check your spam folder!
                     </p>
                 </div>
                 <div className="space-y-3">
